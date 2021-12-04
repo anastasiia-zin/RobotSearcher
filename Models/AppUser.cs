@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Models
 {
-    public class AppUser : IdentityUser<int>
+    public class AppUser : IdentityUser
     {
-        public ICollection<Notification> Notifications { get; set; }
+        public ICollection<AppUserNotification> AppUserNotifications { get; set; }
+        public ICollection<Reserve> Reserves { get; set; }
     }
 }

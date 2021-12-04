@@ -12,6 +12,6 @@ namespace Models
         public bool IsRead { get; set; }
         public bool IsDeleted { get; set; }
         
-        public ICollection<AppUser> Users { get; set; }
+        public ICollection<AppUserNotification> AppUserNotifications { get; set; }
     }
 }
