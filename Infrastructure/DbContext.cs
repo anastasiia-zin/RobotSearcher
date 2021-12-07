@@ -25,16 +25,34 @@ namespace Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             modelBuilder.Entity<BaseEntity>().Property(x => x.Id)
                 .HasDefaultValueSql("newid()")
                 .ValueGeneratedOnAdd()
                 .IsRequired();
-             modelBuilder.Entity<BaseEntity>().HasKey(x => x.Id);
-             
-             /*modelBuilder.Entity<Category>()
-                 .HasMany(x=> x.Robots)
-                 .WithMany(x => x.Categories);*/
+            modelBuilder.Entity<BaseEntity>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = "1",
+                Name = "admin",
+                NormalizedName = "admin".ToUpper(),
+                ConcurrencyStamp = "1",
+            });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = "2",
+                Name = "user",
+                ConcurrencyStamp = "2",
+                NormalizedName = "user".ToUpper()
+            });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = "3",
+                Name = "director",
+                ConcurrencyStamp = "3",
+                NormalizedName = "director".ToUpper()
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

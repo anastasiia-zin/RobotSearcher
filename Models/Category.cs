@@ -7,6 +7,5 @@ namespace Models
     {
         public string Name { get; set; }
         public virtual ICollection<CategoryRobot> CategoryRobots { get; set; }
-       // public ICollection<IdentityUser> Users { get; set; }
     }
 }

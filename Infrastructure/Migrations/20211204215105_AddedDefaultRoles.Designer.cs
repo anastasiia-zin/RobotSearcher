@@ -4,14 +4,16 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20211204215105_AddedDefaultRoles")]
+    partial class AddedDefaultRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,10 +246,34 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Models.AppUserNotification", b =>
+            modelBuilder.Entity("Models.BaseEntity", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BaseEntity");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseEntity");
+                });
+
+            modelBuilder.Entity("Models.AppUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.HasDiscriminator().HasValue("AppUser");
+                });
+
+            modelBuilder.Entity("Models.AppUserNotification", b =>
+                {
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("NotificationId")
                         .HasColumnType("nvarchar(450)");
@@ -255,32 +281,26 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
-
                     b.HasIndex("NotificationId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AppUserNotifications");
+                    b.HasDiscriminator().HasValue("AppUserNotification");
                 });
 
             modelBuilder.Entity("Models.Category", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
+                    b.HasDiscriminator().HasValue("Category");
                 });
 
             modelBuilder.Entity("Models.CategoryRobot", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("CategoryId")
                         .HasColumnType("nvarchar(450)");
@@ -288,35 +308,30 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RobotId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
-
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("RobotId");
 
-                    b.ToTable("CategoryRobots");
+                    b.HasDiscriminator().HasValue("CategoryRobot");
                 });
 
             modelBuilder.Entity("Models.Issue", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Issue_Name");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Issues");
+                    b.HasDiscriminator().HasValue("Issue");
                 });
 
             modelBuilder.Entity("Models.Manufacturer", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -325,20 +340,18 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Manufacturer_Name");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Manufacturers");
+                    b.HasDiscriminator().HasValue("Manufacturer");
                 });
 
             modelBuilder.Entity("Models.Notification", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<DateTime>("Added")
                         .HasColumnType("datetime2");
@@ -355,44 +368,41 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Topic")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications");
+                    b.HasDiscriminator().HasValue("Notification");
                 });
 
             modelBuilder.Entity("Models.Reserve", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Reserve_Description");
 
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RobotId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("Reserve_RobotId");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("Reserve_UserId");
 
                     b.HasIndex("RobotId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reserves");
+                    b.HasDiscriminator().HasValue("Reserve");
                 });
 
             modelBuilder.Entity("Models.Robot", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<DateTime>("BuyDate")
                         .HasColumnType("datetime2");
@@ -404,10 +414,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Robot_Country");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Robot_Description");
 
                     b.Property<int>("FullBatteryAmperPerHour")
                         .HasColumnType("int");
@@ -439,38 +451,27 @@ namespace Infrastructure.Migrations
                     b.Property<int>("YearOfCreation")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
                     b.HasIndex("ManufacturerId");
 
-                    b.ToTable("Robots");
+                    b.HasDiscriminator().HasValue("Robot");
                 });
 
             modelBuilder.Entity("Models.RobotIssue", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Models.BaseEntity");
 
                     b.Property<string>("IssueId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RobotId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("RobotIssue_RobotId");
 
                     b.HasIndex("IssueId");
 
                     b.HasIndex("RobotId");
 
-                    b.ToTable("RobotIssues");
-                });
-
-            modelBuilder.Entity("Models.AppUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.HasDiscriminator().HasValue("AppUser");
+                    b.HasDiscriminator().HasValue("RobotIssue");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -593,6 +594,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Robot");
                 });
 
+            modelBuilder.Entity("Models.AppUser", b =>
+                {
+                    b.Navigation("AppUserNotifications");
+
+                    b.Navigation("Reserves");
+                });
+
             modelBuilder.Entity("Models.Category", b =>
                 {
                     b.Navigation("CategoryRobots");
@@ -620,13 +628,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reserves");
 
                     b.Navigation("RobotIssues");
-                });
-
-            modelBuilder.Entity("Models.AppUser", b =>
-                {
-                    b.Navigation("AppUserNotifications");
-
-                    b.Navigation("Reserves");
                 });
 #pragma warning restore 612, 618
         }

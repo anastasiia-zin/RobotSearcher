@@ -2,10 +2,10 @@
 
 namespace Settings
 {
-    public static class DatabaseSettings
+    public class DatabaseSettings
     {
-        public const string Section = "";
+        public const string SectionName = "ConnectionStrings";
         
-        public static string ConnectionStringName { get; set; }
+        public static string DefaultConnection { get; set; }
     }
 }
